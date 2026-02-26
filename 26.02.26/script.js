@@ -1,3 +1,13 @@
+const bgMusic = document.getElementById('bgMusic');
+bgMusic.volume = 0.4;
+
+function startExperience() {
+    const welcome = document.getElementById('welcome-overlay');
+    welcome.classList.add('fade-out');
+    bgMusic.play().catch(e => console.log("Ошибка воспроизведения:", e));
+    setBackgroundDate();
+}
+
 function openImage() {
     const posterSrc = document.getElementById('posterImg').src;
     document.getElementById('fullImage').src = posterSrc;
