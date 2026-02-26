@@ -1,47 +1,42 @@
-const bgMusic = document.getElementById('bgMusic');
-bgMusic.volume = 0.4;
-
-function startExperience() {
+window.startExperience = function() {
     const welcome = document.getElementById('welcome-overlay');
-    welcome.classList.add('fade-out');
-    bgMusic.play().catch(e => console.log("Ошибка воспроизведения:", e));
+    const bgMusic = document.getElementById('bgMusic');
+    
+    if (welcome) welcome.classList.add('fade-out');
+    if (bgMusic) {
+        bgMusic.volume = 0.4;
+        bgMusic.play().catch(e => console.log(e));
+    }
     setBackgroundDate();
-}
+};
 
-function openImage() {
-    const posterSrc = document.getElementById('posterImg').src;
-    document.getElementById('fullImage').src = posterSrc;
+window.setBackgroundDate = function() {
+    const el = document.getElementById('bg-date');
+    if (el) {
+        const now = new Date();
+        el.innerText = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
+};
+
+window.openImage = function() {
+    const src = document.getElementById('posterImg').src;
+    document.getElementById('fullImage').src = src;
     document.getElementById('overlay').style.display = 'flex';
-}
+};
 
-function closeImage() {
+window.closeImage = function() {
     document.getElementById('overlay').style.display = 'none';
-}
+};
 
-const btnNo = document.getElementById('runawayBtn');
-btnNo.addEventListener('mouseover', () => {
-    const x = Math.random() * (window.innerWidth - btnNo.offsetWidth);
-    const y = Math.random() * (window.innerHeight - btnNo.offsetHeight);
-    
-    btnNo.style.position = 'fixed';
-    btnNo.style.left = x + 'px';
-    btnNo.style.top = y + 'px';
-    btnNo.style.zIndex = '999';
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('runawayBtn');
+    if (btn) {
+        const move = () => {
+            btn.style.position = 'fixed';
+            btn.style.left = Math.random() * (window.innerWidth - btn.offsetWidth) + 'px';
+            btn.style.top = Math.random() * (window.innerHeight - btn.offsetHeight) + 'px';
+        };
+        btn.addEventListener('mouseover', move);
+        btn.addEventListener('touchstart', e => { e.preventDefault(); move(); });
+    }
 });
-
-btnNo.addEventListener('click', (e) => {
-    e.preventDefault();
-    alert('Кнопка сломалась, придется нажать на соседнюю! 😉');
-});
-function setBackgroundDate() {
-    const bgDateElement = document.getElementById('bg-date');
-    const now = new Date();
-    
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const year = String(now.getFullYear()).slice(-2); 
-    
-    bgDateElement.innerText = `${day}.${month}.${year}`;
-}
-
-setBackgroundDate();
