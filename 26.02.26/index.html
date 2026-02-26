@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приглашение в кино!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="bg-date" class="background-date"></div>
+    <div id="overlay" onclick="closeImage()">
+        <img id="fullImage" src="" alt="Full Screen">
+    </div>
+
+    <div class="container">
+        <h1>Күлкің сенің бір керемет әлемнің</h1>
+        <p class="subtitle">Осы әдемі күнде шықсақ, Семейдің көркі ашылар?)</p>
+
+        <div class="poster-container" onclick="openImage()">
+            <img id="posterImg" class="poster" src="./afisha.jpg" alt="Постер">
+        </div>
+
+        <div class="info-box">
+            <div class="info-item">
+                <span>Фильм</span>
+                <strong>Соңғы Махаббат</strong>
+            </div>
+            <div class="info-item">
+                <span>Кинотеатр</span>
+                <strong>Dastan Cinema</strong>
+            </div>
+            <div class="info-item">
+                <span>Дата</span>
+                <strong style="font-family: monospace;">26.02.26, 18:10</strong>
+            </div>
+            <div class="info-item">
+                <span>Зал</span>
+                <strong>Мрак без присутсвия твоего</strong>
+            </div>
+        </div>
+
+        <div>7 ряд</div>
+        <div class="screen"></div>
+        <div class="seats" style="font-family: monospace;">
+            <div class="seat">15</div>
+            <div class="seat">16</div>
+            <div class="seat selected">17</div>
+            <div class="seat selected">18</div>
+            <div class="seat">19</div>
+            <div class="seat">20</div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-yes" onclick="alert('Күтемін сені, жаным')">Иә</button>
+            <button class="btn btn-no" id="runawayBtn">Жоқ</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
