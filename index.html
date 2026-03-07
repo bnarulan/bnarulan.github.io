@@ -1,38 +1,399 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Для тебя — с любовью</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>С 8 Марта, капюшон</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Poiret+One&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --rose:#e8a0b4;--deep-rose:#c0617c;--blush:#f5d5df;
+  --ivory:#fdf6f0;--gold:#d4a853;--dark:#160d12;
+  --dark2:#1e1018;--dark3:#2a1520;
+  --petal1:#f8c8d4;--petal2:#f0a0b8;--petal3:#e87898;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--dark);
+  font-family:'Cormorant Garamond',serif;
+  color:var(--ivory);
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* CURSOR */
+.cur{width:10px;height:10px;background:var(--rose);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen}
+.cur-ring{width:34px;height:34px;border:1px solid rgba(232,160,180,.6);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .18s ease}
+
+/* MUSIC BTN */
+#musicBtn{
+  position:fixed;bottom:30px;right:30px;z-index:500;
+  width:54px;height:54px;border-radius:50%;
+  border:1px solid rgba(232,160,180,.4);
+  background:rgba(22,13,18,.85);
+  backdrop-filter:blur(12px);
+  cursor:none;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+  color:var(--rose);font-size:22px;
+}
+#musicBtn:hover{border-color:var(--rose);transform:scale(1.1);box-shadow:0 0 20px rgba(232,160,180,.3)}
+#musicBtn.playing{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,160,180,.4)}50%{box-shadow:0 0 0 14px rgba(232,160,180,0)}}
+
+/* CANVAS */
+#c{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+/* HERO */
+#hero{
+  position:relative;min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:60px 20px;
+  background:
+    radial-gradient(ellipse at 20% 30%,rgba(120,30,60,.35) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 70%,rgba(80,20,40,.3) 0%,transparent 60%),
+    var(--dark);
+  overflow:hidden;z-index:1;
+}
+.h-glow{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;}
+.hg1{width:700px;height:700px;background:rgba(192,97,124,.12);top:-200px;left:-200px;animation:driftA 14s ease-in-out infinite alternate}
+.hg2{width:500px;height:500px;background:rgba(212,168,83,.08);bottom:-100px;right:-100px;animation:driftA 10s ease-in-out infinite alternate-reverse}
+@keyframes driftA{to{transform:translate(50px,40px) scale(1.1)}}
+
+.hero-num{
+  font-family:'Poiret One',cursive;
+  font-size:clamp(100px,22vw,240px);
+  line-height:.85;letter-spacing:-6px;
+  color:transparent;-webkit-text-stroke:1px var(--deep-rose);
+  opacity:0;animation:riseIn 1.4s cubic-bezier(.16,1,.3,1) forwards .2s;
+  text-shadow:0 0 120px rgba(192,97,124,.15);
+  user-select:none;
+}
+.hero-num span{color:var(--rose);-webkit-text-stroke:0}
+.hero-tag{font-size:clamp(11px,1.8vw,15px);letter-spacing:8px;text-transform:uppercase;color:var(--gold);opacity:0;animation:riseIn 1.2s ease forwards .7s;margin-top:10px}
+.hero-title{font-size:clamp(24px,4.5vw,52px);font-style:italic;font-weight:300;text-align:center;color:var(--blush);opacity:0;animation:riseIn 1.2s ease forwards 1.1s;margin-top:20px;line-height:1.4;max-width:700px}
+.hero-title em{color:var(--rose);font-style:normal}
+
+.scroll-cue{position:absolute;bottom:40px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeIn 1s ease forwards 2.5s}
+.scroll-cue span{font-size:10px;letter-spacing:4px;color:var(--rose);opacity:.5;text-transform:uppercase}
+.scroll-line{width:1px;height:50px;background:linear-gradient(var(--rose),transparent);animation:scPulse 2s ease-in-out infinite}
+@keyframes scPulse{0%,100%{opacity:.5}50%{opacity:.15}}
+@keyframes riseIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* POEM */
+#poem{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;background:linear-gradient(170deg,#1a0e16 0%,var(--dark) 50%,#1a0e16 100%)}
+.ornament{font-size:40px;color:var(--rose);opacity:.35;animation:spin 25s linear infinite;display:inline-block;margin-bottom:20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.poem-card{max-width:580px;width:100%;text-align:center;padding:60px 50px;border:1px solid rgba(232,160,180,.12);background:rgba(255,255,255,.02);backdrop-filter:blur(12px);position:relative}
+.poem-card::before,.poem-card::after{content:'';position:absolute;width:50px;height:50px;border-color:rgba(212,168,83,.4);border-style:solid}
+.poem-card::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
+.poem-card::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+.p-line{font-size:clamp(19px,3vw,26px);line-height:2.2;font-style:italic;font-weight:300;color:var(--blush);opacity:0;transform:translateY(22px);transition:opacity .9s ease,transform .9s ease}
+.p-line.on{opacity:1;transform:none}
+.p-line em{color:var(--rose);font-style:normal}
+.p-line b{color:var(--gold);font-weight:400}
+
+/* FLOWERS */
+#flowers{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;background:radial-gradient(ellipse at center,#280f1c 0%,var(--dark) 100%)}
+.sec-title{font-family:'Poiret One',cursive;font-size:clamp(34px,7vw,72px);color:var(--rose);text-align:center;margin-bottom:60px;opacity:0;transform:translateY(30px);transition:all 1s ease}
+.sec-title.on{opacity:1;transform:none}
+.bouquet{display:flex;gap:14px;align-items:flex-end;justify-content:center;flex-wrap:wrap;max-width:700px}
+.flower{display:flex;flex-direction:column;align-items:center;opacity:0;transform:translateY(70px) scale(.6);transition:opacity .9s ease,transform .9s ease}
+.flower.on{opacity:1;transform:none}
+.flower:hover .f-head{transform:rotate(-15deg) scale(1.12)}
+.f-head{position:relative;transition:transform .4s ease}
+.petal{position:absolute;border-radius:50% 50% 50% 0;transform-origin:bottom center}
+.f-core{position:absolute;border-radius:50%;background:radial-gradient(circle,#ffe08a,var(--gold));top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 12px rgba(212,168,83,.7)}
+.f-stem{width:3px;background:linear-gradient(#6a9e6e,#4a7a4e);border-radius:2px;position:relative}
+.f-leaf{position:absolute;width:20px;height:12px;background:#5a8e5e;border-radius:50% 0}
+.f-leaf.l{left:-18px;transform:rotate(30deg);top:35px}
+.f-leaf.r{right:-18px;transform:rotate(-30deg) scaleX(-1);top:55px}
+
+/* WISH */
+#wish{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;background:radial-gradient(ellipse at 50% 0%,rgba(192,97,124,.2) 0%,transparent 60%),var(--dark)}
+.wish-wrap{max-width:640px;text-align:center}
+.wish-icon{font-size:64px;opacity:0;transform:scale(0);transition:all 1s cubic-bezier(.34,1.56,.64,1);margin-bottom:30px;display:inline-block}
+.wish-icon.on{opacity:1;transform:scale(1)}
+.wish-headline{font-family:'Poiret One',cursive;font-size:clamp(32px,6vw,64px);color:var(--rose);line-height:1.1;opacity:0;transform:translateY(30px);transition:all 1s ease .2s;margin-bottom:30px}
+.wish-headline.on{opacity:1;transform:none}
+.wish-text{font-size:clamp(17px,2.5vw,22px);font-style:italic;font-weight:300;color:var(--blush);line-height:1.9;opacity:0;transform:translateY(20px);transition:all 1s ease .4s;margin-bottom:40px}
+.wish-text.on{opacity:1;transform:none}
+.wish-sign{font-size:clamp(14px,2vw,18px);letter-spacing:4px;text-transform:uppercase;color:var(--gold);opacity:0;transition:all 1s ease .6s}
+.wish-sign.on{opacity:1}
+
+/* DIVIDER */
+.div-line{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:20px;padding:20px}
+.div-line::before,.div-line::after{content:'';flex:1;max-width:200px;height:1px;background:linear-gradient(to right,transparent,rgba(232,160,180,.25))}
+.div-line::after{background:linear-gradient(to left,transparent,rgba(232,160,180,.25))}
+.div-line span{color:var(--rose);font-size:22px;opacity:.45}
+
+/* HEARTS */
+.heart-burst{position:fixed;pointer-events:none;z-index:999;font-size:20px;animation:burstUp .9s ease forwards}
+@keyframes burstUp{to{transform:translateY(-80px) scale(.2);opacity:0}}
+</style>
 </head>
 <body>
 
-    <div class="container" id="mainCard">
-        <div class="heart" aria-hidden="true"><img width="200px" src="img/03-32-04-108_512.webp" alt=""></div>
-        <p class="intro">Ғашықтың тілі - тілсіз тіл <br> Көзбен көр де, ішпен біл</p>
-        <h1>Will you be my Valentine?</h1>
-        <p class="sub">Семейімді жақсы көрсем, тек бір адам үшін ғана жақсы көремін. <br> Сен үшін</p>
-        
-        <div class="buttons">
-            <button class="btn-yes" type="button" onclick="acceptLove()">Иә!</button>
-            <button class="btn-no" type="button" id="noBtn">Жоқ (қате)</button>
-        </div>
-        <p style="font-size: 10px; margin-top: 20;"> (пикми түсте) </p>
-        </div>
+<canvas id="c"></canvas>
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="curR"></div>
+<!-- HERO -->
+<section id="hero">
+  <div class="h-glow hg1"></div>
+  <div class="h-glow hg2"></div>
+  <div class="hero-num"><span>8</span> марта</div>
+  <div class="hero-tag">Международный женский день</div>
+  <div class="hero-title">Для самой <em>прекрасной</em> девушки<br>в этом мире</div>
+  <div class="scroll-cue">
+    <span>листай</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
 
-    <div class="container success-message" id="successCard">
-        <div class="" aria-hidden="true"><img width="200px" src="img/S7Pmc.gif" alt=""></div>
-        <h1>Бақытты қылар Бақытты бір бақыттың жауабы!</h1>
-        <p class="date">Күтемін сені <strong>14 february 14:00</strong>,<br> ғашығым</p>
-        <p class="ps">"Зеленая книга" 1:09:27</p>
-        <p style="margin-top: 20px;">and</p>
-        <a class="ps" href="https://vt.tiktok.com/ZSm6HvJfB/" target="_blank">https://vt.tiktok.com/ZSm6HvJfB/</a>
+<div class="div-line"><span>❀</span></div>
+
+<!-- POEM -->
+<section id="poem">
+  <div class="ornament">✿</div>
+  <div class="poem-card">
+    <div class="p-line" data-delay="0">Ты — как первый луч рассвета,</div>
+    <div class="p-line" data-delay="150">Тёплый, нежный, <em>золотой</em>…</div>
+    <div class="p-line" data-delay="300">Ты прекрасней всех на свете,</div>
+    <div class="p-line" data-delay="450">С <em>ясной душою</em> живой.</div>
+    <div class="p-line" data-delay="650">&nbsp;</div>
+    <div class="p-line" data-delay="750">Пусть весна цветёт для тебя,</div>
+    <div class="p-line" data-delay="900">Пусть <b>счастье</b> не знает границ,</div>
+    <div class="p-line" data-delay="1050">Пусть каждый твой день — <em>это праздник</em>,</div>
+    <div class="p-line" data-delay="1200">Сияющий тысячей лиц!</div>
+  </div>
+</section>
+
+<div class="div-line"><span>✦</span></div>
+
+<!-- FLOWERS -->
+<section id="flowers">
+  <div class="sec-title">Букет для тебя 🌸</div>
+  <div class="bouquet" id="bouquet"></div>
+</section>
+
+<div class="div-line"><span>❀</span></div>
+
+<!-- WISH -->
+<section id="wish">
+  <div class="wish-wrap">
+    <div class="wish-icon">💝</div>
+    <div class="wish-headline">С 8 Марта,<br>Соскам менің!</div>
+    <div class="wish-text">
+      Пусть каждый день приносит тебе радость,<br>
+      улыбки и тепло. Ты заслуживаешь самого<br>
+      лучшего в этом мире — и даже больше.<br><br>
+      Ты удивительная, сильная и прекрасная.<br>
+      Спасибо, что ты есть. 🌷
     </div>
+    <div class="wish-sign">С любовью и нежностью ожидаю тебя у подъезда твоего. На сборы даю 5 минут)</div>
+  </div>
+</section>
 
-    
+<script>
+// ── CURSOR ──
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+});
+setInterval(()=>{
+  rx+=(mx-rx)*.14;ry+=(my-ry)*.14;
+  curR.style.left=Math.round(rx)+'px';curR.style.top=Math.round(ry)+'px';
+},14);
 
-    <div id="confetti-container" aria-hidden="true"></div>
-    <script src="script.js"></script>
+// ── HEART BURST ──
+document.addEventListener('click',e=>{
+  const emojis=['🌸','💗','🌷','✨','💖','🌺','💕','🎀'];
+  for(let i=0;i<7;i++){
+    const h=document.createElement('div');
+    h.className='heart-burst';
+    h.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    h.style.cssText=`left:${e.clientX+(Math.random()*50-25)}px;top:${e.clientY+(Math.random()*20-10)}px;animation-duration:${.55+Math.random()*.5}s`;
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),1000);
+  }
+});
+
+// ── FALLING PETALS ──
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+function resize(){cv.width=innerWidth;cv.height=innerHeight}
+resize();window.addEventListener('resize',resize);
+const cols=['#f8c8d4','#f0a0b8','#e87898','#f5d5df','#fce4ec','#e8a0b4','#ffd6e0'];
+class Petal{
+  constructor(init){this.reset(init)}
+  reset(init){
+    this.x=Math.random()*cv.width;
+    this.y=init?Math.random()*cv.height:-30;
+    this.r=Math.random()*13+5;
+    this.vx=(Math.random()-.5)*1.1;
+    this.vy=Math.random()*.85+.45;
+    this.rot=Math.random()*Math.PI*2;
+    this.vr=(Math.random()-.5)*.04;
+    this.alpha=Math.random()*.45+.25;
+    this.color=cols[Math.floor(Math.random()*cols.length)];
+    this.sw=Math.random()*Math.PI*2;
+    this.swS=Math.random()*.03+.01;
+  }
+  draw(){
+    ctx.save();ctx.translate(this.x,this.y);ctx.rotate(this.rot);
+    ctx.globalAlpha=this.alpha;ctx.beginPath();
+    ctx.ellipse(0,0,this.r*.38,this.r,0,0,Math.PI*2);
+    ctx.fillStyle=this.color;ctx.fill();ctx.restore();
+  }
+  step(){
+    this.sw+=this.swS;
+    this.x+=this.vx+Math.sin(this.sw)*.6;
+    this.y+=this.vy;this.rot+=this.vr;
+    if(this.y>cv.height+30)this.reset(false);
+  }
+}
+const petals=Array.from({length:75},(_,i)=>new Petal(true));
+(function loop(){ctx.clearRect(0,0,cv.width,cv.height);petals.forEach(p=>{p.step();p.draw()});requestAnimationFrame(loop)})();
+
+// ── BUILD SVG FLOWERS ──
+const bq=document.getElementById('bouquet');
+const flowerData=[
+  {size:78,hue:0,stem:80},{size:100,hue:15,stem:100},
+  {size:115,hue:-8,stem:115},{size:100,hue:22,stem:100},
+  {size:78,hue:-15,stem:80}
+];
+flowerData.forEach((fd,i)=>{
+  const s=fd.size,half=s/2,r=s*.42,pw=s*.36,ph=s*.6;
+  const f=document.createElement('div');
+  f.className='flower';
+  f.style.transitionDelay=(i*.13)+'s';
+  const angles=[0,45,90,135,180,225,270,315];
+  const petStr=angles.map(a=>`
+    <div class="petal" style="
+      width:${pw}px;height:${ph}px;
+      background:${a<180?'#f8c8d4':'#f0a0b8'};
+      filter:hue-rotate(${fd.hue}deg);
+      left:${half-pw/2}px;top:${half-ph}px;
+      transform:rotate(${a}deg) translateY(-${s*.22}px);
+    "></div>`).join('');
+  f.innerHTML=`
+    <div class="f-head" style="width:${s}px;height:${s}px">
+      ${petStr}
+      <div class="f-core" style="width:${s*.28}px;height:${s*.28}px"></div>
+    </div>
+    <div class="f-stem" style="height:${fd.stem}px">
+      <div class="f-leaf l"></div>
+      <div class="f-leaf r"></div>
+    </div>`;
+  bq.appendChild(f);
+});
+
+// ── SCROLL REVEAL ──
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const el=e.target;
+    if(el.classList.contains('p-line')){
+      setTimeout(()=>el.classList.add('on'),+(el.dataset.delay||0));
+    } else el.classList.add('on');
+  });
+},{threshold:.12});
+document.querySelectorAll('.p-line,.sec-title,.flower,.wish-icon,.wish-headline,.wish-text,.wish-sign').forEach(el=>obs.observe(el));
+
+// ── WEB AUDIO MUSIC ──
+let AC=null,playing=false,gainNode=null,allNodes=[];
+const btn=document.getElementById('musicBtn');
+
+function mkAudio(){
+  AC=new (window.AudioContext||window.webkitAudioContext)();
+  gainNode=AC.createGain();gainNode.gain.value=.3;
+  gainNode.connect(AC.destination);
+
+  // Reverb
+  const rev=AC.createConvolver();
+  const len=AC.sampleRate*2.8;
+  const rb=AC.createBuffer(2,len,AC.sampleRate);
+  for(let c=0;c<2;c++){const d=rb.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.8)}
+  rev.buffer=rb;
+  const rg=AC.createGain();rg.gain.value=.38;
+  rev.connect(rg);rg.connect(gainNode);
+
+  function note(f,t,dur,vol,type='sine'){
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.type=type;o.frequency.value=f;
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(vol,t+.07);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g);g.connect(gainNode);g.connect(rev);
+    o.start(t);o.stop(t+dur+.05);
+    allNodes.push(o);
+  }
+
+  // Notes in E minor pentatonic: E3 G3 A3 B3 D4 E4 G4 A4 B4 D5 E5
+  const N={
+    E3:164.81,G3:196,A3:220,B3:246.94,D4:293.66,
+    E4:329.63,G4:392,A4:440,B4:493.88,D5:587.33,E5:659.25,
+    G5:783.99,A5:880,
+    E2:82.41,B2:123.47,A2:110
+  };
+  const bpm=68,q=60/bpm,h=q*2,dq=q*1.5;
+
+  // Gentle waltz-like melody (4 bars, loop)
+  const mel=[
+    [N.E5,q],[N.D5,q],[N.B4,h],
+    [N.A4,q],[N.G4,q],[N.E4,h],
+    [N.D5,q],[N.B4,q],[N.A4,dq],[N.G4,q*.5],
+    [N.E5,q*3],
+    [N.G4,q],[N.A4,q],[N.B4,h],
+    [N.D5,q],[N.E5,q],[N.D5,h],
+    [N.B4,q],[N.A4,q],[N.G4,dq],[N.E4,q*.5],
+    [N.A4,q*3],
+  ];
+  const bass=[
+    [N.E2,q*3],[N.A2,q*3],[N.B2,q*3],[N.E2,q*3],
+    [N.E2,q*3],[N.A2,q*3],[N.B2,q*3],[N.A2,q*3],
+  ];
+  const pads=[
+    [[N.E3,N.G3,N.B3],q*6],
+    [[N.A2,N.E3,N.A3],q*6],
+    [[N.B2,N.D4,N.G3],q*6],
+    [[N.A2,N.E3,N.A3],q*6],
+  ];
+
+  let loopDur=mel.reduce((s,[,d])=>s+d,0);
+
+  function schedLoop(t0){
+    let ct=t0;
+    mel.forEach(([f,d])=>{note(f,ct,d*.88,.19,'sine');ct+=d});
+    ct=t0;
+    bass.forEach(([f,d])=>{note(f,ct,d*.6,.1,'triangle');ct+=d});
+    ct=t0;
+    pads.forEach(([fs,d])=>{fs.forEach(f=>note(f,ct,d*.92,.055,'sine'));ct+=d});
+    if(playing){
+      const tid=setTimeout(()=>{if(playing&&AC)schedLoop(AC.currentTime+.05)},loopDur*940);
+      allNodes.push({stop:()=>clearTimeout(tid)});
+    }
+  }
+  schedLoop(AC.currentTime+.08);
+}
+
+function stopAudio(){
+  allNodes.forEach(n=>{try{n.stop&&n.stop(0)}catch(e){}});
+  allNodes=[];
+  if(AC){AC.close();AC=null;}
+}
+
+btn.addEventListener('click',e=>{
+  e.stopPropagation();
+  playing=!playing;
+  if(playing){btn.textContent='🎶';btn.classList.add('playing');mkAudio()}
+  else{btn.textContent='🎵';btn.classList.remove('playing');stopAudio()}
+});
+</script>
 </body>
 </html>
+
